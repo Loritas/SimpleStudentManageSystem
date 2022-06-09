@@ -1,0 +1,9 @@
+.vscode
+.DS_Store
+
+# debug
+src/main.dsYM
+src/main
+
+# program
+SimpleStudentSystem
