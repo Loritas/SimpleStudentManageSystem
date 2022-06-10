@@ -4,6 +4,7 @@
 # debug
 src/main.dsYM
 src/main
+data.ini
 
 # program
 SimpleStudentSystem
