@@ -1,4 +1,4 @@
-VPATH = src utils
+VPATH = src core
 
 .PHONY: tip clean build msg
 
@@ -8,16 +8,16 @@ msg:
 build: tips SimpleStudentSystem clean
 
 SimpleStudentSystem:  main.o student.o studentList.o 
-	@$(CXX) -o $@ $^ -Wall
+	@$(CXX) -o $@ $^ -Wall -std=c++11
 
-main.o: main.cpp config.h writer.h
-	@$(CXX) -c $<
+main.o: main.cpp application.h
+	@$(CXX) -c $< -std=c++11
 
 studentList.o: studentList.cpp studentList.h student.h
-	@$(CXX) -c $<
+	@$(CXX) -c $< -std=c++11
 
 student.o: student.cpp student.h 
-	@$(CXX) -c $<
+	@$(CXX) -c $< -std=c++11
 
 clean:
 	@echo "编译完成, 正在清理杂项"

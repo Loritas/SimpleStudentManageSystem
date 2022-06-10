@@ -2,9 +2,9 @@
  * @Author: Loritas 2223292817@qq.com
  * @Date: 2022-06-09 20:29:44
  * @LastEditors: Loritas 2223292817@qq.com
- * @LastEditTime: 2022-06-10 12:53:07
+ * @LastEditTime: 2022-06-10 17:15:34
  * @FilePath: /SimpleStudentManageSystem/utils/config.h
- * @Description: 
+ * @Description: 配置程序的各项属性
  * Copyright (c) 2022 by Loritas 2223292817@qq.com, All Rights Reserved. 
  */
 #ifndef __CONFIG_H__
@@ -28,13 +28,13 @@ static std::unordered_map<std::string, studentSetFunc> studentSetAbtMap;
 static std::unordered_set<std::string> configSet;
 static std::unordered_map<std::string, std::string> configMap;
 
-const static void init();
-const static void saveStudentData(StudentList&);
-const static StudentList& readStudentData();
-const static void readConfig();
-const static void setConfig();
+static void init();
+static void saveStudentData();
+static void readStudentData();
+static void readConfig();
+static void setConfig();
 
-const static void init()
+static void init()
 {
     studentSetAbtMap["Stu_Name"] = &Student::setName;
     studentSetAbtMap["Stu_JavaScore"] = &Student::setJavaScore;
@@ -48,7 +48,7 @@ const static void init()
     
 }
 
-const static void saveStudentData(StudentList& sList)
+static void saveStudentData()
 {
     std::ofstream ofs;
     ofs.open(DATA_PATH+DATA_FILE_NAME, std::ios::out);
@@ -76,7 +76,7 @@ const static void saveStudentData(StudentList& sList)
     ofs.close();
 }
 
-const static StudentList& readStudentData()
+static void readStudentData()
 {
     Student curStu;
 
@@ -130,11 +130,10 @@ const static StudentList& readStudentData()
     }
 
     ifs.close();
-    return sList;
 }
 
 
-const static void readConfig()
+static void readConfig()
 {
     std::ifstream ifs;
     ifs.open(CONFIG_PATH, std::ios::in);
@@ -181,7 +180,7 @@ const static void readConfig()
     ifs.close();
 }
 
-const static void setConfig()
+static void setConfig()
 {
     auto pair = configMap.find("sys_data_path");
     if (pair != configMap.end())
