@@ -2,7 +2,7 @@
  * @Author: Loritas 2223292817@qq.com
  * @Date: 2022-06-08 20:26:13
  * @LastEditors: Loritas 2223292817@qq.com
- * @LastEditTime: 2022-06-09 20:48:06
+ * @LastEditTime: 2022-06-12 00:37:34
  * @FilePath: /SimpleStudentManageSystem/src/studentList.h
  * @Description:    学生队列的头文件，用于保存队列相关信息，使用vector和unordered_set实现
  * Copyright (c) 2022 by Loritas 2223292817@qq.com, All Rights Reserved. 
@@ -37,7 +37,8 @@ public:
     double nonOkPercent();
     double goodPercent();
     void addStudent(Student &);
-    void deleteStudent(std::string info);
+    bool updateStudent(std::string, std::string, std::string, std::string, std::string);
+    bool deleteStudent(std::string info);
     Student getStudent(std::string info);
 
     std::vector<Student> getList();

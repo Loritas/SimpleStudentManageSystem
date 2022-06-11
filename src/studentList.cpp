@@ -2,7 +2,7 @@
  * @Author: Loritas 2223292817@qq.com
  * @Date: 2022-06-08 20:45:08
  * @LastEditors: Loritas 2223292817@qq.com
- * @LastEditTime: 2022-06-09 23:56:10
+ * @LastEditTime: 2022-06-12 00:49:28
  * @FilePath: /SimpleStudentManageSystem/src/studentList.cpp
  * @Description: 学生队列的功能实现
  * Copyright (c) 2022 by Loritas 2223292817@qq.com, All Rights Reserved. 
@@ -69,31 +69,27 @@ void StudentList::addStudent(Student &stu)
     if (set.find(stu.getSid()) == set.end())
     {
         sum++;
-        if (stu.score() >= GOOD) goodSum++;
-        if (stu.score() >= OK) okSum++;
+        if (stu.score() / 2 >= GOOD) goodSum++;
+        if (stu.score() / 2 >= OK) okSum++;
         list.push_back(stu);
         set.insert(stu.getSid());
     }
 }
 
-/**
- * @name: deleteStudent
- * @msg: 根据提供的学号信息，在队列中删除指定学生
- * @param {string} info: 学生的学号信息
- * @return {*}
- */
-void StudentList::deleteStudent(std::string info)
+
+bool StudentList::deleteStudent(std::string info)
 {
     for(std::vector<Student>::iterator iter= list.begin(); iter != list.end(); iter++)
     {       
         if(iter->getSid() == info){
             sum--;
-            if (iter->score() >= GOOD) goodSum--;
-            if (iter->score() >= OK) okSum--;
+            if (iter->score() / 2 >= GOOD) goodSum--;
+            if (iter->score() / 2 >= OK) okSum--;
             list.erase(iter);
-            break;
+            return true;
         }
     }
+    return false;
 }
 
 /**
@@ -112,6 +108,36 @@ Student StudentList::getStudent(std::string info)
     }
 
     return Student();
+}
+
+bool StudentList::updateStudent(std::string sid, std::string nSid, std::string nName, std::string nCpp, std::string nJava)
+{
+    if (sid != nSid && set.find(nSid) != set.end())
+    {
+        return false;
+    }
+    for(std::vector<Student>::iterator iter= list.begin(); iter != list.end(); iter++)
+    {       
+        if(iter->getSid() == sid){
+            double nScore = atof(nCpp.c_str()) + atof(nJava.c_str());
+            if (iter->score() / 2 >= GOOD && nScore / 2 < GOOD)
+            {
+                goodSum--;
+            }
+            if (iter->score() / 2 >= OK && nScore / 2 < OK)
+            {
+                okSum--;
+            }
+            set.erase(sid);
+            set.insert(nSid);
+            iter->setSid(nSid);
+            iter->setName(nName);
+            iter->setCppScore(nCpp);
+            iter->setJavaScore(nJava);
+            return true;
+        }
+    }
+    return false;
 }
 
 std::vector<Student> StudentList::getList()
