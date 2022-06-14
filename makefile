@@ -10,7 +10,7 @@ build: tips SimpleStudentSystem clean
 SimpleStudentSystem:  main.o student.o studentList.o 
 	@$(CXX) -o $@ $^ -Wall -std=c++11
 
-main.o: main.cpp application.h
+main.o: main.cpp application.h config.h dataOp.h
 	@$(CXX) -c $< -std=c++11
 
 studentList.o: studentList.cpp studentList.h student.h

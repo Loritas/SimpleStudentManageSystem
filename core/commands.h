@@ -2,7 +2,7 @@
  * @Author: Loritas 2223292817@qq.com
  * @Date: 2022-06-10 12:56:10
  * @LastEditors: Loritas 2223292817@qq.com
- * @LastEditTime: 2022-06-12 00:38:16
+ * @LastEditTime: 2022-06-14 21:46:43
  * @FilePath: /SimpleStudentManageSystem/core/commands.h
  * @Description: 
  * Copyright (c) 2022 by Loritas 2223292817@qq.com, All Rights Reserved. 
@@ -11,6 +11,7 @@
 #define __COMMANDS_H__
 #include <iostream>
 #include <sstream>
+#include "dataOp.h"
 #include "config.h"
 
 typedef std::string string;
@@ -18,6 +19,8 @@ typedef void(*commandFunc)(const std::vector<string>&, int, char*);
 
 static std::unordered_map<string, commandFunc> commandsMap;
 static std::unordered_map<string, string> helpMap;
+
+static bool operate_res = false;
 
 const static string HELP = "help";
 const static string ADD = "add";
@@ -28,7 +31,7 @@ const static string SAVE = "save";
 const static string QUIT = "q";
 
 static void initCommandsMap();
-static void execCommands(const string &cmd, char *msg);
+extern void execCommands(const string &cmd, char *msg);
 
 static void help(const std::vector<string> &args, int argc, char *msg);
 static void add(const std::vector<string> &args, int argc, char *msg);
@@ -37,11 +40,11 @@ static void update(const std::vector<string> &args, int argc, char *msg);
 static void _delete(const std::vector<string> &args, int argc, char *msg);
 static void save(const std::vector<string> &args, int argc, char *msg);
 
-static void execCommands(const string &cmd, char *msg)
+extern void execCommands(const string &cmd, char *msg)
 {
     if (cmd[0] == '\n' || cmd[0] == '#' || cmd[0] == '\0')
     {
-        sprintf(msg, "");
+        sprintf(msg, " ");
         return;
     }
     int len = cmd.length();
@@ -64,6 +67,16 @@ static void execCommands(const string &cmd, char *msg)
     }
     commandFunc cmdFunc = cmdFuncKey->second;
     (*cmdFunc)(args, idx-1, msg);
+    if (!initFlag && operate_res && AOF)
+    {
+        AOFBuffer[AOFBufferSize] = cmd;
+        AOFBufferSize++;
+        if (AOFBufferSize == AOF_BUF_SIZE - 1)
+        {
+            aofSave();
+        }
+    }
+    operate_res = false;
 }
 
 static void help(const std::vector<string> &args, int argc, char *msg)
@@ -111,6 +124,7 @@ static void add(const std::vector<string> &args, int argc, char *msg)
     Student stu = Student(args[1], args[2], atof(args[3].c_str()), atof(args[4].c_str()));
     sList.addStudent(stu);
     sprintf(msg, "add student '%s' to the list\n", args[1].c_str());
+    operate_res = true;
 }
 
 static void select(const std::vector<string> &args, int argc, char *msg)
@@ -203,6 +217,7 @@ static void update(const std::vector<string> &args, int argc, char *msg)
         return;
     }
     sprintf(msg, "update completed\n");
+    operate_res = true;
 }
 
 static void _delete(const std::vector<string> &args, int argc, char *msg)
@@ -225,11 +240,18 @@ static void _delete(const std::vector<string> &args, int argc, char *msg)
         return;
     }
     sprintf(msg, "delete student completed, sid: %s\n", args[1].c_str());
+    operate_res = true;
 }
 
 static void save(const std::vector<string> &args, int argc, char *msg)
 {
     saveStudentData();
+    if (AOF && argc >= 1 && args[1] == "tradition")
+    {
+        AOF = false;
+        saveStudentData();
+        AOF = true;
+    }
     sprintf(msg, "save completed\n");
 }
 
@@ -247,7 +269,7 @@ static void initCommandsMap()
     helpMap[SELECT] = "'select usage: select [option: all / sid] [-sid: StudentSid] [order: desc/incr]\n";
     helpMap[UPDATE] = "'update' usage: update [StudentSid] [New Sid] [New name] [New CppScore] [New JavaScore]\n";
     helpMap[DELETE] = "'delete' usage: delete [StudentSid]\n";
-    helpMap[SAVE] = "'save' usage: save\n";
+    helpMap[SAVE] = "'save' usage: save [Optional: tradition]\nif you are using 'AOF', you can type option[tradition] to save a backup in data.ini\n";
     helpMap[QUIT] = "enter command 'q' can quit the system\n";
 }
 

@@ -2,7 +2,7 @@
  * @Author: Loritas 2223292817@qq.com
  * @Date: 2022-06-08 20:45:08
  * @LastEditors: Loritas 2223292817@qq.com
- * @LastEditTime: 2022-06-12 00:49:28
+ * @LastEditTime: 2022-06-14 15:18:34
  * @FilePath: /SimpleStudentManageSystem/src/studentList.cpp
  * @Description: 学生队列的功能实现
  * Copyright (c) 2022 by Loritas 2223292817@qq.com, All Rights Reserved. 
@@ -85,6 +85,8 @@ bool StudentList::deleteStudent(std::string info)
             sum--;
             if (iter->score() / 2 >= GOOD) goodSum--;
             if (iter->score() / 2 >= OK) okSum--;
+            
+            delete(iter.base());
             list.erase(iter);
             return true;
         }
